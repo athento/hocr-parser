@@ -1,0 +1,12 @@
+.cache/v/cache/lastfailed
+.idea/.name
+.idea/hocr-parser.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/inspectionProfiles/profiles_settings.xml
+src/hocr_parser/__init__.pyc
+src/hocr_parser/parser.pyc
+tests/.cache/v/cache/lastfailed
+tests/hocr/__pycache__/test_hocr.cpython-27-PYTEST.pyc
