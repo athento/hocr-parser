@@ -14,14 +14,24 @@ class HOCRElement:
     def __init__(self, hocr_html, next_tag, next_attribute, next_class):
         self.__coordinates = (0, 0, 0, 0)
         self._hocr_html = hocr_html
+        self._id = None
         self._elements = self._parse(next_tag, next_attribute, next_class)
 
     def _parse(self, next_tag, next_attributte, next_class):
+
+        try:
+            self._id = self._hocr_html['id']
+        except KeyError:
+            self._id = None
+
         try:
             title = self._hocr_html['title']
             match = HOCRElement.COORDINATES_PATTERN.search(title)
             if match:
-                self.__coordinates = (match.group(1), match.group(2), match.group(3), match.group(4))
+                self.__coordinates = (int(match.group(1)),
+                                      int(match.group(2)),
+                                      int(match.group(3)),
+                                      int(match.group(4)))
             else:
                 raise ValueError("The HOCR element doesn't contain a valid title property")
         except KeyError:
@@ -40,6 +50,19 @@ class HOCRElement:
     @property
     def html(self):
         return self._hocr_html.prettify()
+
+    @property
+    def id(self):
+        return self._id
+
+    def __hash__(self):
+        return hash(self._id)
+
+    def __eq__(self, other):
+        if not isinstance(other, HOCRElement):
+            return False
+        else:
+            return self._id == other._id
 
     @property
     @abstractmethod

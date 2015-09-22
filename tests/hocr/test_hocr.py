@@ -9,8 +9,9 @@ def test_hocr():
     full_path = os.path.join(dir_path, filename)
     document = HOCRDocument(full_path, is_path=True)
     assert document.npages == 1
-    assert document.coordinates == (0, 0, 545, 771)
     page = document.pages[0]
+    assert page.coordinates == (0, 0, 545, 771)
+    assert page.id == 'page_1'
     assert page.nareas == 3
     area = page.areas[0]
     assert area.coordinates == (83, 68, 449, 376)
