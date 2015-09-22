@@ -15,9 +15,10 @@ def test_hocr():
     assert page.nareas == 3
     area = page.areas[0]
     assert area.coordinates == (83, 68, 449, 376)
-    assert area.nlines == 11
-    assert area.lines[0].nwords == 1
-    assert area.lines[0].ocr_text == area.lines[0].words[0].ocr_text == "|"
+    assert area.nparagraphs == 2
+    assert area.paragraphs[0].lines[0].nwords == 1
+    assert area.paragraphs[0].lines[0].ocr_text == area.paragraphs[0].lines[0].words[0].ocr_text == "|"
+    assert area.paragraphs[1].nlines == 10
 
     area2_text = """At the remote terminal.
 demodulation reconstructs the video
@@ -31,10 +32,11 @@ facsimile copy of the subject
 document is produced."""
 
     area1_line2 = "In facsimilea photocell is caused"
-    assert area.lines[1].ocr_text == area1_line2
+    assert area.paragraphs[1].lines[0].ocr_text == area1_line2
 
     area = page.areas[1]
     assert area.ocr_text == area2_text
+
 
 
 

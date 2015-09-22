@@ -129,7 +129,31 @@ class Area(HOCRElement):
     HOCR_AREA_TAG = "ocr_carea"
 
     def __init__(self, hocr_html):
-        super(Area, self).__init__(hocr_html, 'span', Line.HOCR_LINE_TAG, Line)
+        super(Area, self).__init__(hocr_html, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
+
+    @property
+    def paragraphs(self):
+        return self._elements
+
+    @property
+    def nparagraphs(self):
+        return len(self._elements)
+
+    @property
+    def ocr_text(self):
+        output = ""
+        for element in self._elements[:-1]:
+            output += element.ocr_text
+            output += "\n"
+        output += self._elements[-1].ocr_text
+        return output
+
+class Paragraph(HOCRElement):
+
+    HOCR_PAR_TAG = "ocr_par"
+
+    def __init__(self, hocr_html):
+        super(Paragraph, self).__init__(hocr_html, 'span', Line.HOCR_LINE_TAG, Line)
 
     @property
     def lines(self):
