@@ -10,10 +10,12 @@ def test_hocr():
     document = HOCRDocument(full_path, is_path=True)
     assert document.npages == 1
     page = document.pages[0]
+    assert page.parent == document
     assert page.coordinates == (0, 0, 545, 771)
     assert page.id == 'page_1'
     assert page.nareas == 3
     area = page.areas[0]
+    assert area.parent == page
     assert area.coordinates == (83, 68, 449, 376)
     assert area.nparagraphs == 2
     assert area.paragraphs[0].lines[0].nwords == 1
@@ -36,6 +38,8 @@ document is produced."""
 
     area = page.areas[1]
     assert area.ocr_text == area2_text
+
+
 
 
 

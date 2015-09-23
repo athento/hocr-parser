@@ -11,10 +11,11 @@ class HOCRElement:
 
     COORDINATES_PATTERN = re.compile("bbox\s(-?[0-9]+)\s(-?[0-9]+)\s(-?[0-9]+)\s(-?[0-9]+)")
 
-    def __init__(self, hocr_html, next_tag, next_attribute, next_class):
+    def __init__(self, hocr_html, parent, next_tag, next_attribute, next_class):
         self.__coordinates = (0, 0, 0, 0)
         self._hocr_html = hocr_html
         self._id = None
+        self._parent = parent
         self._elements = self._parse(next_tag, next_attribute, next_class)
 
     def _parse(self, next_tag, next_attributte, next_class):
@@ -40,7 +41,7 @@ class HOCRElement:
         elements = []
         if next_tag is not None and next_class is not None:
             for html_element in self._hocr_html.find_all(next_tag, {'class':next_attributte}):
-                elements.append(next_class(html_element))
+                elements.append(next_class(self, html_element))
         return elements
 
     @property
@@ -54,6 +55,10 @@ class HOCRElement:
     @property
     def id(self):
         return self._id
+
+    @property
+    def parent(self):
+        return self._parent
 
     def __hash__(self):
         return hash(self._id)
@@ -78,7 +83,7 @@ class HOCRDocument(HOCRElement):
         else:
             hocr_html = BeautifulSoup(open(source, 'r').read(), 'html.parser')
 
-        super(HOCRDocument, self).__init__(hocr_html, 'div', Page.HOCR_PAGE_TAG, Page)
+        super(HOCRDocument, self).__init__(hocr_html, None, 'div', Page.HOCR_PAGE_TAG, Page)
 
     @property
     def ocr_text(self):
@@ -102,8 +107,8 @@ class Page(HOCRElement):
 
     HOCR_PAGE_TAG = "ocr_page"
 
-    def __init__(self, hocr_html):
-        super(Page, self).__init__(hocr_html, 'div', Area.HOCR_AREA_TAG, Area)
+    def __init__(self, parent, hocr_html):
+        super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
 
     @property
     def ocr_text(self):
@@ -128,8 +133,8 @@ class Area(HOCRElement):
 
     HOCR_AREA_TAG = "ocr_carea"
 
-    def __init__(self, hocr_html):
-        super(Area, self).__init__(hocr_html, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
+    def __init__(self, parent, hocr_html):
+        super(Area, self).__init__(hocr_html, parent, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
 
     @property
     def paragraphs(self):
@@ -152,8 +157,8 @@ class Paragraph(HOCRElement):
 
     HOCR_PAR_TAG = "ocr_par"
 
-    def __init__(self, hocr_html):
-        super(Paragraph, self).__init__(hocr_html, 'span', Line.HOCR_LINE_TAG, Line)
+    def __init__(self, parent, hocr_html):
+        super(Paragraph, self).__init__(hocr_html, parent, 'span', Line.HOCR_LINE_TAG, Line)
 
     @property
     def lines(self):
@@ -177,8 +182,8 @@ class Line(HOCRElement):
 
     HOCR_LINE_TAG = "ocr_line"
 
-    def __init__(self, hocr_html):
-        super(Line, self).__init__(hocr_html, 'span', Word.HOCR_WORD_TAG, Word)
+    def __init__(self, parent, hocr_html):
+        super(Line, self).__init__(hocr_html, parent, 'span', Word.HOCR_WORD_TAG, Word)
 
     @property
     def words(self):
@@ -202,8 +207,8 @@ class Word(HOCRElement):
 
     HOCR_WORD_TAG = "ocrx_word"
 
-    def __init__(self, hocr_html):
-        super(Word, self).__init__(hocr_html, None, None, None)
+    def __init__(self, parent, hocr_html):
+        super(Word, self).__init__(hocr_html, parent, None, None, None)
 
     @property
     def ocr_text(self):
